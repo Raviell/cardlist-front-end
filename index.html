@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastrados</title>
+    <link rel="stylesheet" href="css/estilo.css"/>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
+
+   
+</head>
+<body>
+    <div id="app" class="container-fluid">
+        <nav class="navbar navbar-dark bg-dark">
+            <form class="form-inline">
+              <button class="btn btn-sm btn-outline-light" type="button" style="margin-right: 10px;" v-on:click="novoCard()">NOVO CARD</button>
+              <h3 style="color:aliceblue; margin: 5px;">CARDLIST - COLEÇÃO VIRTUAL</h3>
+            </form>
+            <div class="spinner-border text-secondary" role="status">
+                <span class="sr-only">Loading...</span>
+              </div>
+          </nav>
+    <div id="lista" v-if="mostrarCadastrados">
+        <fieldset class="border border-info" style="display: flex;justify-content: center; margin: 25px auto; width: 50%; padding: 10px;">
+            <table class="texto">
+                <thead>
+                    <tr>
+                        <th>APAGAR</th>
+                        <th>CARD</th>
+                        <th>EDITAR</th>    
+                    </tr>
+                </thead>
+        <tbody>
+            <tr v-for="item in lista">
+                <td>
+                    <button class="btn btn-outline-danger" v-on:click="apagar(item.id)"> APAGAR </button>
+                </td>
+                <td>
+                  <button class="btn btn-link" v-on:click="mostrarDetalhes(item.id)">{{ item.nome }}</button>
+                </td>  
+                <td>
+                    <button class="btn btn-outline-warning" v-on:click="editar(item.id)"> EDITAR </button>
+                </td> 
+            </tr>
+        </tbody>
+            </table>
+        </fieldset>
+    </div>
+    <div id="informacoes" v-if="mostrarInformacoes">
+    <fieldset class="border border-info" style="display: flex;justify-content: center; margin: 25px auto; width: 50%; padding: 10px;">
+        <table class="texto">
+            <thead>
+            </thead>
+            <tbody>
+                <tr>
+                    <th>NOME DO CARD </th>
+                    <th> - NÍVEL </th>
+                    <th> - TIPO - </th>
+                    <th>PONTOS ATK/DEF</th>
+                </tr>
+                <tr>
+                    <td>{{ card.nome}}</td>
+                    <td>{{ card.nivel }}</td>
+                    <td>{{ card.tipo }}</td>
+                    <td>{{ card.pontos }}</td>
+                </tr>
+            </tbody>
+        </table>
+        </fieldset>
+        <div class="flex-container">
+            <button type="button" class="btn btn-outline-secondary" style="margin-right: 10px;" v-on:click="exibirCadastrados()">VOLTAR</button>   
+        </div>
+    </div>
+        <div if="cadastrar" v-if="mostrarCadastro">
+        <fieldset class="border border-info" style="display: flex;justify-content: center; margin: 25px auto; width: 50%; padding: 10px;">
+            <div class="flex-container">
+                <div id="cadastro">
+                <div class="subtitulo">
+                    PREENCHA TODOS OS CAMPOS
+                </div>
+                <div class="form-group">
+                <label for="nome"></label>
+                <input type="text" class="form-control" name="nome" id="nome" placeholder="NOME" size="40" v-model="card.nome" />
+                </div>
+                <div class="form-group">
+                <label for="nivel"></label>
+                <input type="text" class="form-control" name="nivel" id="nivel" placeholder="NÍVEL" size="40" v-model="card.nivel" />
+                </div>
+                <div class="form-group">
+                <label for="tipo"></label>
+                <input type="text" class="form-control" name="tipo" id="tipo" placeholder="TIPO" size="40" v-model="card.tipo" />
+                </div>
+                <div class="form-group">
+                <label for="pontos"></label>
+                <input type="text" class="form-control" name="pontos" id="pontos" placeholder="PONTOS" size="40" v-model="card.pontos"/>
+                </div>
+                <div class="flex-container">
+                <button class="btn btn-primary" v-on:click="cadastrar()">GRAVAR</button>
+                </div>   
+            </div> 
+        </div>
+            </fieldset>
+            <div class="flex-container">
+                <button type="button" class="btn btn-outline-secondary" style="margin-right: 10px;" v-on:click="exibirCadastrados()">VOLTAR</button>   
+            </div>
+        </div>
+    </div>
+
+    <script>
+        var app = new Vue({
+            el: '#app',
+            data: {
+                mostrarCadastrados: false,
+                mostrarInformacoes: false,
+                mostrarCadastro: false,
+                lista: [],
+                card: {}
+
+            },
+            methods: {
+                exibirCadastrados: function(){
+                    this.mostrarCadastrados = true;
+                    this.mostrarInformacoes = false;
+                    this.mostrarCadastro = false;
+                },
+                exibirInformacoes: function(){
+                    this.mostrarCadastrados = false;
+                    this.mostrarInformacoes = true;
+                    this.mostrarCadastro = false;
+                },
+                exibirCadastro: function(){
+                    this.mostrarCadastrados = false;
+                    this.mostrarInformacoes = false;
+                    this.mostrarCadastro = true;
+                },
+
+                mostrarTodos: function(){
+                    fetch('http://localhost:8080/') //Conexão com projeto back-end
+                    .then(( resposta) => resposta.json())
+                    .then(( objetoLista) => {
+                        console.log(objetoLista);
+                        this.lista = objetoLista;
+                    })
+                
+            },
+
+            informacoes: function(id){
+                this.card = this.lista.find( item => item.id == id);
+               
+                
+             },
+
+             apagar: function(id){
+                fetch('http://localhost:8080/apagar/' + id)
+                .then(() => { 
+                    this.mostrarTodos();
+                    this.card = {};
+                 });
+
+             },
+             cadastrar: function(){
+                const headers = new Headers({'Content-type': 'application/json'});
+                fetch('http://localhost:8080/cadastrar', {
+                    method: 'POST',
+                    headers,
+                    body: JSON.stringify(this.card)
+                })
+                .then((resposta) => resposta.json())
+                .then((objetoCard) => {
+                    console.log(objetoCard);
+                    this.card = objetoCard;
+                    this.mostrarTodos();
+                    this.exibirInformacoes();
+                });
+             },
+             limparCampos: function(){
+                 this.card = {};
+             },
+             novoCard: function(){
+                 this.limparCampos();
+                 this.exibirCadastro();
+             },
+
+             editar: function(id){
+                 this.informacoes(id);
+                 this.exibirCadastro();
+
+             },
+
+             mostrarDetalhes: function(id){
+                 this.informacoes(id);
+                 this.exibirInformacoes();
+             }
+
+                
+            },
+            
+
+            created: function() {
+                this.mostrarTodos();
+                this.exibirCadastrados();
+                
+            }
+        });
+
+
+    </script>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-Piv4xVNRyMGpqkS2by6br4gNJ7DXjqk09RmUpJ8jgGtD7zP9yug3goQfGII0yAns" crossorigin="anonymous"></script>
+</body>
+</html>
