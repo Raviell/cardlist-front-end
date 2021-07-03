@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cadastrados</title>
-    <link rel="stylesheet" href="css/estilo.css"/>
+    <link rel="stylesheet" href="estilo.css"/>
     <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
 
@@ -137,7 +137,7 @@
                 },
 
                 mostrarTodos: function(){
-                    fetch('http://localhost:8080/') //Conexão com projeto back-end
+                    fetch('https://cardlist-v1.herokuapp.com/') //Conexão com projeto back-end
                     .then(( resposta) => resposta.json())
                     .then(( objetoLista) => {
                         console.log(objetoLista);
@@ -153,7 +153,7 @@
              },
 
              apagar: function(id){
-                fetch('http://localhost:8080/apagar/' + id)
+                fetch('https://cardlist-v1.herokuapp.com/apagar/' + id)
                 .then(() => { 
                     this.mostrarTodos();
                     this.card = {};
@@ -162,7 +162,7 @@
              },
              cadastrar: function(){
                 const headers = new Headers({'Content-type': 'application/json'});
-                fetch('http://localhost:8080/cadastrar', {
+                fetch('https://cardlist-v1.herokuapp.com/cadastrar', {
                     method: 'POST',
                     headers,
                     body: JSON.stringify(this.card)
